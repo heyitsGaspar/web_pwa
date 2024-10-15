@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Course } from '../services/api.tsx';
+import { Course } from '../services/api.ts';
 import CourseActions from '../services/courseActions.tsx';
 import EditCourseForm from '../components/editCourseForm.tsx';
 

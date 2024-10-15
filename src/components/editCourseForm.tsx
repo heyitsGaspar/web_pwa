@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Course, updateCourse } from '../services/api.tsx';
+import { Course, updateCourse } from '../services/api.ts';
 
 interface EditCourseFormProps {
   course: Course;

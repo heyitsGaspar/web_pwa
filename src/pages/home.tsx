@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCourses, Course } from '../services/api.tsx';
+import { getCourses, Course, useOnlineStatus } from '../services/api.ts';
 import CourseCard from '../components/courseCard.tsx';
 import CourseForm from '../components/courseForm.tsx';
 
@@ -14,6 +14,8 @@ const Home: React.FC = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  useOnlineStatus(fetchCourses);
 
   const handleCourseCreated = () => {
     fetchCourses(); // Refrescar la lista de cursos

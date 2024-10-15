@@ -1,5 +1,5 @@
 import React from 'react';
-import { deleteCourse } from '../services/api.tsx';
+import { deleteCourse } from '../services/api.ts';
 
 interface CourseActionsProps {
   courseId: string;
