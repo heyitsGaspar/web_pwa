@@ -9,7 +9,7 @@ module.exports = {
       skipWaiting: true,
       runtimeCaching: [
         {
-          urlPattern: ({ url }) => url.origin === 'http://localhost:3000', // Cambia esto si tu API está en otro dominio
+          urlPattern: ({ url }) => url.origin === 'https://apipwa-courses.up.railway.app', // Cambia esto si tu API está en otro dominio
           handler: 'NetworkFirst', // Intenta obtener de la red primero, pero usa el caché si no hay conexión.
           options: {
             cacheName: 'api-cache',
