@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getCourses, Course, useOnlineStatus } from '../services/api.ts';
+import { getCourses, Course,useOnlineStatus, syncData  } from '../services/api.ts';
 import CourseCard from '../components/courseCard.tsx';
 import CourseForm from '../components/courseForm.tsx';
 
@@ -7,15 +7,24 @@ const Home: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
 
   const fetchCourses = async () => {
-    const data = await getCourses();
-    setCourses(data);
+    try {
+      const data = await getCourses();
+      setCourses(data);
+    } catch (error) {
+      console.error('Failed to fetch courses:', error);
+    }
   };
 
   useEffect(() => {
     fetchCourses();
+
+    // Verificar si hay datos por sincronizar cuando la app se monta
+    if (navigator.onLine) {
+      syncData();
+    }
   }, []);
 
-  useOnlineStatus(fetchCourses);
+  useOnlineStatus(fetchCourses); 
 
   const handleCourseCreated = () => {
     fetchCourses(); // Refrescar la lista de cursos

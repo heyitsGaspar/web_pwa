@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useEffect } from 'react';
-const API_URL = 'http://localhost:3000/api/courses'; // Cambia la URL según sea necesario
+
+// Usamos la variable de entorno o una URL por defecto
+const API_URL = `${process.env.REACT_APP_API_URL}/api/courses`;
 
 export interface Course {
   id: string;
@@ -10,7 +12,41 @@ export interface Course {
   autor: string;
 }
 
-  
+// Sincronización de datos cuando vuelve la conexión
+export const syncData = async () => {
+  const unsyncedChanges = JSON.parse(localStorage.getItem('unsyncedChanges') || '[]');
+
+  // Iterar por los cambios no sincronizados
+  for (const change of unsyncedChanges) {
+    try {
+      if (change.type === 'create') {
+        await axios.post(API_URL, change.data); // Crear curso
+      } else if (change.type === 'update') {
+        await axios.put(`${API_URL}/${change.data.id}`, change.data); // Editar curso
+      } else if (change.type === 'delete') {
+        await axios.delete(`${API_URL}/${change.data.id}`); // Eliminar curso
+      }
+      console.log(`Successfully synced: ${change.type}`);
+    } catch (error) {
+      console.error('Error syncing:', error);
+    }
+  }
+
+  // Limpiar el localStorage después de sincronizar
+  localStorage.setItem('unsyncedChanges', JSON.stringify([]));
+};
+
+// Detectar cuando la aplicación vuelve a estar online
+window.addEventListener('online', syncData);
+
+// Función para agregar cambios al localStorage si está offline
+const addToLocalStorage = (change: any) => {
+  const unsyncedChanges = JSON.parse(localStorage.getItem('unsyncedChanges') || '[]');
+  unsyncedChanges.push(change);
+  localStorage.setItem('unsyncedChanges', JSON.stringify(unsyncedChanges));
+};
+
+// Obtener cursos (manejo offline incluido)
 export const getCourses = async (): Promise<Course[]> => {
   // Si el navegador está offline, usa el localStorage
   if (!navigator.onLine) {
@@ -41,52 +77,42 @@ export const getCourses = async (): Promise<Course[]> => {
   }
 };
 
-
-
-// export const getCourses = async (): Promise<Course[]> => {
-//   const cachedCourses = localStorage.getItem('courses'); // Verificar si ya hay cursos almacenados
-
-//   try {
-//     // Intentar obtener los cursos desde la API
-//     const response = await axios.get<Course[]>(API_URL);
-//     const courses = response.data;
-
-//     // Almacenar los cursos obtenidos en el localStorage
-//     localStorage.setItem('courses', JSON.stringify(courses));
-
-//     return courses; // Retornar los cursos obtenidos de la API
-//   } catch (error) {
-//     console.error('Error fetching courses:', error);
-
-//     // Si ocurre un error, verificar si hay datos en el localStorage
-//     if (cachedCourses) {
-//       // Retornar los cursos almacenados previamente en el localStorage si existen
-//       return JSON.parse(cachedCourses);
-//     }
-
-//     // Lanzar el error si no hay nada en el localStorage y la API falla
-//     throw new Error('No courses available and failed to fetch from API.');
-//   }
-// };
-
-
+// Crear curso (con manejo offline)
 export const createCourse = async (course: Omit<Course, 'id'>): Promise<Course> => {
-  const response = await axios.post<Course>(API_URL, course);
-  return response.data;
+  if (navigator.onLine) {
+    const response = await axios.post<Course>(API_URL, course);
+    return response.data;
+  } else {
+    // Si no hay conexión, almacenamos la creación en localStorage
+    addToLocalStorage({ type: 'create', data: course });
+    console.log('Course added to localStorage for later sync');
+    return { id: Date.now().toString(), ...course } as Course;
+  }
 };
 
-// Método para actualizar un curso
+// Editar curso (con manejo offline)
 export const updateCourse = async (courseId: string, updatedCourse: Partial<Course>): Promise<Course> => {
-  console.log('Datos que se están enviando para la actualización:', updatedCourse);
-  const response = await axios.put<Course>(`${API_URL}/${courseId}`, updatedCourse);
-  return response.data;
+  if (navigator.onLine) {
+    const response = await axios.put<Course>(`${API_URL}/${courseId}`, updatedCourse);
+    return response.data;
+  } else {
+    // Si no hay conexión, almacenamos la actualización en localStorage
+    addToLocalStorage({ type: 'update', data: { id: courseId, ...updatedCourse } });
+    console.log('Course update added to localStorage for later sync');
+    return { id: courseId, ...updatedCourse } as Course;
+  }
 };
 
-// Método para eliminar un curso
+// Eliminar curso (con manejo offline)
 export const deleteCourse = async (id: string): Promise<void> => {
-  await axios.delete(`${API_URL}/${id}`);
+  if (navigator.onLine) {
+    await axios.delete(`${API_URL}/${id}`);
+  } else {
+    // Si no hay conexión, almacenamos la eliminación en localStorage
+    addToLocalStorage({ type: 'delete', data: { id } });
+    console.log('Course delete added to localStorage for later sync');
+  }
 };
-
 
 // Hook para monitorear si la app vuelve a estar en línea
 export const useOnlineStatus = (fetchCourses: () => void) => {
