@@ -8,7 +8,7 @@ export interface Course {
   id: string;
   nombre: string;
   precio: number;
-  categoria: 'Tecnología' | 'Matemáticas' | 'Inglés' | 'Sociales' | 'Diseño' | 'Marketing';
+  categoria: 'Tecnología' | 'Matemáticas' | 'Inglés' ;
   autor: string;
 }
 
