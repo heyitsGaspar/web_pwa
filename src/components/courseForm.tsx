@@ -9,7 +9,7 @@ const CourseForm: React.FC<CourseFormProps> = ({ onCourseCreated }) => {
   const [nombre, setNombre] = useState('')
   const [precio, setPrecio] = useState<number | ''>('')
   const [categoria, setCategoria] = useState<
-    'Tecnología' | 'Matemáticas' | 'Inglés'| 'Sociales' | 'Diseño' | 'Marketing'
+    'Tecnología' | 'Matemáticas' | 'Inglés'
   >('Tecnología')
   const [autor, setAutor] = useState('')
 
@@ -55,7 +55,7 @@ const CourseForm: React.FC<CourseFormProps> = ({ onCourseCreated }) => {
         value={categoria}
         onChange={e =>
           setCategoria(
-            e.target.value as 'Tecnología' | 'Matemáticas' | 'Inglés' | 'Sociales' | 'Diseño' | 'Marketing'
+            e.target.value as 'Tecnología' | 'Matemáticas' | 'Inglés' 
           )
         }
         className='border rounded p-2 mb-2 w-full'
@@ -63,9 +63,6 @@ const CourseForm: React.FC<CourseFormProps> = ({ onCourseCreated }) => {
         <option value='Tecnología'>Tecnología</option>
         <option value='Matemáticas'>Matemáticas</option>
         <option value='Inglés'>Inglés</option>
-        <option value='Sociales'>Sociales</option>
-        <option value='Diseño'>Diseño</option>
-        <option value='Marketing'>Marketing</option>
       </select>
       <input
         type='text'

@@ -43,15 +43,12 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({ course, onUpdate, onCan
       />
       <select
         value={categoria}
-        onChange={(e) => setCategoria(e.target.value as 'Tecnología' | 'Matemáticas' | 'Inglés' | 'Sociales' | 'Diseño' | 'Marketing')}
+        onChange={(e) => setCategoria(e.target.value as 'Tecnología' | 'Matemáticas' | 'Inglés')}
         className="border rounded p-2 mb-2 w-full"
       >
         <option value="Tecnología">Tecnología</option>
         <option value="Matemáticas">Matemáticas</option>
         <option value="Inglés">Inglés</option>
-        <option value="Sociales">Sociales</option>
-        <option value="Diseño">Diseño</option>
-        <option value="Marketing">Marketing</option>
       </select>
       <input
         type="text"
