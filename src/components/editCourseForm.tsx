@@ -57,6 +57,8 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
           )
         }
         className='border rounded p-2 mb-2 w-full'
+        onChange={(e) => setCategoria(e.target.value as 'Tecnología' | 'Matemáticas' | 'Inglés')}
+        className="border rounded p-2 mb-2 w-full"
       >
         <option value='Tecnología'>Tecnología</option>
         <option value='Matemáticas'>Matemáticas</option>
